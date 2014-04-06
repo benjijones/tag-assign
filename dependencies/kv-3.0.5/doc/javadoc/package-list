@@ -1,0 +1,9 @@
+oracle.kv
+oracle.kv.avro
+oracle.kv.coherence
+oracle.kv.exttab
+oracle.kv.hadoop
+oracle.kv.lob
+oracle.kv.mgmt.jmx
+oracle.kv.stats
+oracle.kv.table

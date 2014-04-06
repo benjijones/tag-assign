@@ -1,0 +1,55 @@
+                                  TABLE EXAMPLES
+
+The code and scripts in this directory demonstrate some of the basic functions
+of the Oracle NoSQL Database table API, including creation and use of
+secondary indexes.
+
+All example Java code is in the single class TableAPIExample.java.  There are
+a number of independent example functions in that class.  These can be run
+together or independently.  They have no interactions.
+
+RUNNING THE TABLE EXAMPLES
+
+The examples require a running KVStore instance that has been populated with
+the example tables and indexes.  A KVLite instance is suitable as a running
+store.  These instructions assume that a default KVLite instance has been
+started using the command:
+  java -jar lib/kvstore.jar kvlite
+
+This creates a store named "kvstore" on localhost on port 5000.  If you use
+another store or other parameters, adjust the instructions below accordingly.
+By default this creates a store in a new "kvroot" directory in your current
+directory.  The location can be changed using additional parameters.
+
+1.  Create the required tables and indexes.  This only needs to be done once for all examples.  In the directory <install_dir>:
+  java -jar lib/kvstore.jar runadmin -host localhost -port 5000 load -file \
+     create_tables.kvs
+This will take a minute or so.
+
+2.  Compile the example code.  In the directory <install_dir>/examples/table:
+  javac -d . -cp <install_dir>/lib/kvclient.jar TableAPIExample.java
+
+3.  Run one or more examples.  This only requires the client interface, in
+kvclient.jar.  In the examples/table directory:
+  java -cp .:<install_dir>/lib/kvclient.jar table.TableAPIExample \
+    [-host localhost] [-port 5000] [-store kvstore] [-example <1-9>]*
+
+All parameters have default values:
+store -- kvstore
+host -- localhost
+port -- 5000
+
+By default all examples are run.  More than one example can be run in a single invocation by using the -example flag multiple times.
+
+NOTES:
+1. Example 7 will show different results if the script evolve_table is run.
+  java -jar lib/kvstore.jar runadmin -host localhost -port 5000 load -file \
+     evolve_tables.kvs
+
+After running the examples run the remove_tables script to clear the
+tables from the database.  This removes all data as well.
+  java -jar lib/kvstore.jar runadmin -host localhost -port 5000 load -file \
+     remove_tables.kvs
+
+
+

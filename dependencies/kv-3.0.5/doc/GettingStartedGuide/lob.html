@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 14. Using Large Objects</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="up" href="index.html" title="Getting Started with Oracle NoSQL Database Key/Value API" />
+    <link rel="prev" href="sequence-exec.html" title="Executing a Sequence" />
+    <link rel="next" href="lobapi.html" title="LOB APIs" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version DRAFT</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 14. Using Large Objects</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="sequence-exec.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="lobapi.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="lob"></a>Chapter 14. Using Large Objects</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="lob.html#lobkeys">LOB Keys</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="lobapi.html">LOB APIs</a>
+            </span>
+          </dt>
+          <dt>
+            <span class="sect1">
+              <a href="lob_example.html">LOB Example</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+        Oracle NoSQL Database provides an interface you can use to read and write Large
+        Objects (LOBs) such as audio and video files. As a general rule,
+        any object greater than 1 MB is a good candidate for representation
+        as a LOB. The LOB API permits access to large values, without
+        having to materialize the value in its entirety by providing
+        streaming APIs for reading and writing these objects.
+    </p>
+      <p>
+        A LOB is stored as a sequence of chunks whose sizes are optimized
+        for the underlying storage system. The chunks constituting a LOB
+        may not all be the same size. Individual chunk sizes are chosen
+        automatically by the system based upon its knowledge of the
+        underlying storage architecture and hardware. Splitting a LOB into
+        chunks permits low latency operations across mixed work loads with
+        values of varying sizes. The stream based APIs serve to insulate
+        the application from the actual representation of the LOB in the
+        underlying storage system.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="lobkeys"></a>LOB Keys</h2>
+            </div>
+          </div>
+        </div>
+        <p>
+            Keys associated with LOBs must have a trailing suffix string at the
+            end of their final key component. By default, this suffix is
+            <code class="literal">.lob</code>, but this may be defined using
+            <code class="methodname">KVStoreConfig.setLOBSuffix()</code>.  
+        </p>
+        <p>
+            For example, a LOB key used for an image file might be:
+        </p>
+        <pre class="programlisting">/Records/People/-/Smith/Sam/Image.lob</pre>
+        <p>
+            Note that all of the LOB APIS verify that the key used to
+            access LOBs meets this trailing suffix requirement. They throw
+            an <code class="classname">IllegalArgumentException</code> if the
+            verification fails.  This requirement permits non-LOB methods
+            to check for inadvertent modifications to LOB objects.
+        </p>
+        <p>
+            This is a summary of LOB-related key checks performed across all
+            methods (LOB and non-LOB):
+        </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                    All non-LOB write operations check for the absence of the
+                    LOB suffix as part of the other key validity checks. If the
+                    check fails it will result in an 
+                    <code class="classname">IllegalArgumentException</code>.
+                </p>
+            </li>
+            <li>
+              <p>
+                    All non-LOB read operations return the associated opaque
+                    value used internally to construct a LOB stream.
+                </p>
+            </li>
+            <li>
+              <p>
+                    All LOB write and read operations in this interface check
+                    for the presence of the LOB suffix. If the check fails it
+                    will result in an
+                    <code class="classname">IllegalArgumentException</code>.
+                </p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="sequence-exec.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="lobapi.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Executing a Sequence </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> LOB APIs</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

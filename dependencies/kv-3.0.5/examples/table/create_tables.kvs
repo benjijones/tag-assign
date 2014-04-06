@@ -1,0 +1,154 @@
+################################
+# Table used for examples:     #
+# Example 1: Hello World!      #
+# Example 2: Secondary Index   #
+################################
+# Create table
+table create -name simpleUsers
+# Add table fields
+add-field -name firstName -type STRING
+add-field -name lastName -type STRING
+add-field -name userID -type INTEGER
+# Assign a field as primary key
+primary-key -field userID
+exit
+# Add table to the database
+plan add-table -wait -name simpleUsers
+# Add a simple secondary index.
+plan add-index -wait -name simpleIndex -table simpleUsers -field firstName
+# Add a compound secondary index.
+plan add-index -wait -name compoundIndex -table simpleUsers -field lastName -field firstName
+
+################################
+# Table used for examples:     #
+# Example 3: Shard keys        #
+# Example 4: Parent table      #
+################################
+# Create table
+table create -name shardUsers
+# Add the fields to the table
+add-field -name firstName -type STRING
+add-field -name lastName -type STRING
+add-field -name email -type STRING
+# Before defining a shard key the primary keys must be defined.
+primary-key -field lastName -field firstName
+# Add a shard key.
+shard-key -field lastName
+exit
+# Add the table plan to the database
+plan add-table -wait -name shardUsers
+
+################################
+# Table used for examples:     #
+# Example 4: Child table       #
+################################
+# Create child table. Name of table must hold parent table's name
+table create -name shardUsers.address
+# Add the fields to the table
+add-field -name Street -type STRING
+add-field -name State -type STRING
+add-field -name ZIP -type INTEGER
+add-field -name addressName -type STRING
+add-field -name addressID -type INTEGER
+# Assign a field as a primary key
+primary-key -field addressID
+exit
+# Add the table plan to the database
+plan add-table -wait -name shardUsers.address
+# Add a simple secondary index.
+plan add-index -wait -name addressIndex -table shardUsers.address -field addressName
+
+
+################################
+# Table used for examples:     #
+# Example 5: Complex field     #
+# Example 6: Index on array    #
+################################
+# Create table
+table create -name complexUsers
+# Add a record field
+add-record-field -name name
+add-field -name firstName -type STRING
+add-field -name lastName -type STRING
+exit
+# Add array field
+add-array-field -name likes
+add-field -type STRING
+exit
+# Add map field
+add-map-field -name optionalInformation
+add-field -type STRING
+exit
+# Add simple field
+add-field -name userID -type INTEGER
+# Assign a field as primary key
+primary-key -field userID
+exit
+# Add the table plan to the database
+plan add-table -wait -name complexUsers
+# Add secondary index on array field
+plan add-index -wait -name arrayIndex -table complexUsers -field likes
+
+###############################
+# Table used for example:     #
+# Example 7: Evolve table     #
+###############################
+# Create table
+table create -name evolveUsers
+# Add table fields
+add-field -name firstName -type STRING
+add-field -name lastName -type STRING
+add-field -name phoneNumber -type INTEGER
+add-field -name userID -type INTEGER
+# Assign a field as primary key
+primary-key -field userID
+exit
+# Add table to the database
+plan add-table -wait -name evolveUsers
+
+###############################
+# Table used for example:     #
+# Example 8: r2 compatibility #
+###############################
+# Add schema
+ddl add-schema -file member-schemas.avsc
+# Create table
+table create -name avroTable
+# create table using schema
+add-schema -name avro.MemberInfo
+add-field -name userID -type STRING
+# Assign a field as primary key
+# Keys for these tables must be of type STRING
+primary-key -field userID
+exit
+# Add the table plan to the database
+plan add-table -wait -name avroTable
+
+# Create table with r2 compatibility for key tables
+# Keys for these tables must be of type STRING
+table create -name r2Table -r2-compat
+add-field -name userID -type STRING
+primary-key -field userID
+exit
+plan add-table -name r2Table -wait
+
+
+################################
+# Table used for example:      #
+# Example 9: Primary key table #
+################################
+# Create table
+table create -name keyTable
+# Add fields
+add-field -name ITEMID -type INTEGER
+add-field -name ITEMSKU -type STRING
+add-field -name ITEMGROUP -type ENUM -enum-values TYPE1,TYPE2,TYPE3
+add-field -name ID -type INTEGER
+# Assign aLL fieldS as primary key
+primary-key -field ITEMID
+primary-key -field ITEMSKU
+primary-key -field ITEMGROUP
+primary-key -field ID
+exit
+# Add the table plan to the database
+plan add-table -wait -name keyTable
