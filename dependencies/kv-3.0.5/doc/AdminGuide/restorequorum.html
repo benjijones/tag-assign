@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Addressing Lost Admin Service Quorum</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="procedures.html" title="Chapter 7. Administrative Procedures" />
+    <link rel="prev" href="replacedc.html" title="Repairing a Failed Zone" />
+    <link rel="next" href="verifyingthestore.html" title="Verifying the Store" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version DRAFT</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Addressing Lost Admin Service Quorum</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="replacedc.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Administrative Procedures</th>
+          <td width="20%" align="right"> <a accesskey="n" href="verifyingthestore.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="restorequorum"></a>Addressing Lost Admin Service Quorum</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          If quorum is lost as a result of the failure of one or more of the
+          admin service instance(s), the store cannot be administered; although
+          it can still be used to read and write key/value pairs. 
+          Because the admin service employs quorum based replication for high 
+          availability of the administrative data, the number of admins deployed 
+          should be large enough to make quorum loss unlikely; typically an odd number such
+          as 3.
+       </p>
+      <p>
+          Usually, the Storage Node Agent (SNA) will automatically restart its failed 
+          admin service; preserving quorum and the ability to administer the store. 
+          But if the SN (specifically, the SNA) fails, then the admin service
+          will remain unavailable.
+       </p>
+      <p>
+          In that case, the following procedure allows you to reconfigure the store
+          so that the remaining admin service(s) can be used to perform 
+          administrative tasks:
+       </p>
+      <p>
+          For the following example, assume all of the following:
+       </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+          A store has 3 Storage Nodes (sn1, sn2, sn3) deployed on hosts (host-sn1, host-sn2, host-sn3) 
+          respectively.
+       </p>
+          </li>
+          <li>
+            <p>
+          An admin service is deployed to two of the three machines; admin 1
+          is deployed to host-sn1 and admin2 is deployed to host-sn2.
+       </p>
+          </li>
+          <li>
+            <p>
+          Admin2 service fails so quorum is lost.
+       </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+          To address the lost admin service quorum:
+       </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+          Verify that admin service quorum has been lost. If a command that requires
+          quorum is executed in the CLI, a timeout should occur if quorum has been lost.
+          For example:
+       </p>
+            <pre class="programlisting">kv-&gt; pool create -name new-pool
+Transaction retry limit exceeded (12.1.3.0.1) </pre>
+          </li>
+          <li>
+            <p>
+          Use the <code class="literal">show admins</code> command to determine the names
+          of the admin services that were deployed:
+       </p>
+            <pre class="programlisting">kv-&gt; show admins
+admin1: Storage Node sn1, HTTP port 13231 (master)
+admin2: Storage Node sn2, HTTP port 13231 </pre>
+          </li>
+          <li>
+            <p>
+          Identify the remaining healthy admin service(s) so quorum can be
+          reconfigured for those service(s). Login to <code class="literal">sn1</code>
+          and run the following command:
+       </p>
+            <pre class="programlisting">&gt; jps -m | grep Admin
+12276 ManagedService -root /opt/ondb/var/kvroot -class Admin -service 
+BootstrapAdmin.13230 -config config1.xml </pre>
+            <p>
+          which means that only the first admin service (the bootstrap admin) that
+          was deployed to the store is still healthy and running on host-sn1.
+       </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+          If a given admin service is down, either the Storage Node itself is down
+          and cannot be accessed, or the command above will produce no output
+          for the associated admin service. In this case, <code class="literal">admin2</code>
+          is down and thus omitted in the output.
+       </p>
+            </div>
+          </li>
+          <li>
+            <p>
+          Once the healthy admin service(s) have been identified, the configuration
+          file for each of the corresponding SN(s) should be modified so that the
+          <code class="literal">je.rep.electableGroupSizeOverride</code> configuration
+          property of the admin component equals the number of remaining
+          healthy admin services. In this example, the configuration file <code class="literal">(config.xml)</code>
+          corresponding to <code class="literal">sn1</code> must be modified. The file has the following structure:
+       </p>
+            <pre class="programlisting">&lt;config version="1"&gt;
+  &lt;component name="storageNodeParams" 
+                          type="storageNodeParams" validate="true"&gt;
+    &lt;property name="storageNodeId" value="1" type="INT"/&gt;
+    &lt;property name="rootDirPath" 
+                          value="/opt/ondb/var/kvroot" type="STRING"/&gt;
+    &lt;property name="haHostname" value="host-sn1" type="STRING"/&gt;
+    &lt;property name="registryPort" value="13230" type="INT"/&gt;
+    ..........
+  &lt;/component&gt;
+  &lt;component name="mountPoints" type="bootstrapParams"
+                                                   validate="false"&gt;
+    &lt;property name="/disk1/ondb/data" value="" type="STRING"&gt;
+  &lt;/component&gt;
+  &lt;component name="globalParams" type="globalParams" validate="true"&gt;
+    &lt;property name="storeName" value="example-store" type="STRING"&gt;
+    &lt;property name="isLoopback" value="false" type="BOOLEAN"&gt;
+  &lt;/component&gt;
+  &lt;component name="admin1" type="adminParams" validate="true"&gt;
+    &lt;property name="adminHttpPort" value="13231" type="INT"&gt;
+    &lt;property name="storageNodeId" value="1" type="INT"/&gt;
+    ..........
+  &lt;/component&gt;
+  &lt;component name="rg1-rn1" type="repNodeParams" validate="true"&gt;
+    &lt;property name="repNodeId" value="rg1-rn1" type="STRING"/&gt;
+    &lt;property name="repNodeType" value="ELECTABLE" type="STRING"&gt;
+    &lt;property name="storageNodeId" value="1" type="INT"/&gt;
+    ..........
+  &lt;/component&gt; </pre>
+            <p>
+          In the component named <code class="literal">admin1</code>, add (or modify)
+          the property named <code class="literal">configProperties</code> and set the 
+          value to 1. For example:
+       </p>
+            <pre class="programlisting">&lt;component name="admin1" type="adminParams" validate="true"&gt;
+&lt;property name="configProperties" 
+value="je.rep.electableGroupSizeOverride 1;" type="STRING"&gt;
+.......... 
+&lt;/component&gt; </pre>
+          </li>
+          <li>
+            <p>
+          Kill each of the healthy admin service process(es) for which a
+          configuration file was modified. To kill the healthy admin service (admin1)
+          on host-sn1 run:
+       </p>
+            <pre class="programlisting">&gt; kill 11762</pre>
+            <p>
+          where 11762 is the process id of the single healthy admin service,
+          identified in step 2.
+       </p>
+            <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+              <h3 class="title">Note</h3>
+              <p>
+          The SNA will automatically restart the killed admin service; which,
+          for this example, will then be configured to operate with a quorum size of 1
+          rather than 2. 
+        </p>
+            </div>
+          </li>
+          <li>
+            <p>
+          Use the single healthy admin service (admin1) to perform the necessary 
+          failure recovery administration tasks on the store.
+        </p>
+          </li>
+          <li>
+            <p>
+          Once the failed admin service(s) are recovered (admin2), repeat steps 4
+          and 5 to reconfigure the admin service(s) to their original notion
+          of quorum. For this example, <code class="literal">je.rep.electableGroupSizeOverride</code>
+          should be set to 2.
+       </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="replacedc.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="procedures.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="verifyingthestore.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Repairing a Failed Zone </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Verifying the Store</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Smoke Testing the System</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Administrator's Guide" />
+    <link rel="up" href="configure.html" title="Chapter 4. Configuring the KVStore" />
+    <link rel="prev" href="deploy-script.html" title="Using a Script to Configure the Store" />
+    <link rel="next" href="troubleshooting.html" title="Troubleshooting" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version DRAFT</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Smoke Testing the System</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="deploy-script.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 4. Configuring the KVStore</th>
+          <td width="20%" align="right"> <a accesskey="n" href="troubleshooting.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="smoketest"></a>Smoke Testing the System</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+          There are several things you can do to ensure that your KVStore
+          is up and fully functional.
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Run the ping command.
+                </p>
+            <pre class="programlisting">&gt; java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar ping -port 5000 -host node01
+Pinging components of store mystore based upon topology sequence #107
+mystore comprises 300 partitions on 3 Storage Nodes
+Storage Node [sn1] on node01:5000 
+Zone: [name=Boston id=zn1 type=PRIMARY]
+Status: RUNNING Ver: 12cR1.3.0.1 2013-12-18 06:35:02 UTC  
+Build id: 8e70b50c0b0e
+       Rep Node [rg1-rn1] Status:RUNNING,MASTER at sequence number:31
+haPort:5011
+Storage Node [sn2] on node02:5000 
+Zone: [name=Boston id=zn1 type=PRIMARY]
+Status: RUNNING Ver: 12cR1.3.0.1 2013-12-18 06:35:02 UTC  
+Build id: 8e70b50c0b0e
+       Rep Node [rg1-rn2] Status:RUNNING,REPLICA at sequence number:31
+haPort:5011
+Storage Node [sn3] on node03:5000 
+Zone: [name=Boston id=zn1 type=PRIMARY]
+Status: RUNNING Ver: 12cR1.3.0.1 2013-12-18 06:35:02 UTC  
+Build id: 8e70b50c0b0e
+       Rep Node [rg1-rn3] Status:RUNNING,REPLICA at sequence number:31
+haPort:5011</pre>
+          </li>
+          <li>
+            <p>
+                    Run the simple "hello world" example. Go to the KVHOME
+                    directory and compile the example:
+                </p>
+            <pre class="programlisting">javac -cp lib/kvclient.jar:examples examples/hello/*.java </pre>
+            <p>
+                    Then run the example (from any directory):
+                </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m \
+-cp KVHOME/lib/kvclient.jar:KVHOME/examples \
+     hello.HelloBigDataWorld \
+     -host &lt;hostname&gt; -port &lt;hostport&gt; -store &lt;kvstore name≫</pre>
+            <p>
+                    This should write the following line to stdout:
+                </p>
+            <pre class="programlisting">Hello Big Data World!</pre>
+          </li>
+          <li>
+            <p>
+                    Look through the Javadoc. You can access it from the
+                    documentation index page, which can be found at
+                    <code class="literal">KVHOME/doc/index.html</code>.
+                </p>
+          </li>
+        </ol>
+      </div>
+      <p>
+            If you run into installation problems or want to start over
+            with a new store, then on every node in the system:
+        </p>
+      <div class="orderedlist">
+        <ol type="1">
+          <li>
+            <p>
+                    Stop the node using:
+                </p>
+            <pre class="programlisting">java -Xmx256m -Xms256m \
+-jar KVHOME/lib/kvstore.jar stop -root KVROOT</pre>
+          </li>
+          <li>
+            <p>
+                    Remove the contents of the KVROOT directory:
+                </p>
+            <pre class="programlisting">rm -rf KVROOT</pre>
+          </li>
+          <li>
+            <p>
+                    Start over with the steps described in
+                    <a class="xref" href="install-config.html" title="Installation Configuration">Installation Configuration</a>.
+                </p>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="deploy-script.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="configure.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="troubleshooting.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using a Script to Configure the Store </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Troubleshooting</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

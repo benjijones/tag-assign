@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Creating Indexes</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tablesapi.html" title="Chapter 4. Introducing Oracle NoSQL Database Tables and Indexes" />
+    <link rel="prev" href="tablesapi.html" title="Chapter 4. Introducing Oracle NoSQL Database Tables and Indexes" />
+    <link rel="next" href="primaryshardkeys.html" title="Chapter 5. Primary and Shard Key Design" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version DRAFT</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Creating Indexes</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="tablesapi.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 4. Introducing Oracle NoSQL Database Tables and Indexes</th>
+          <td width="20%" align="right"> <a accesskey="n" href="primaryshardkeys.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="createindex"></a>Creating Indexes</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <dl>
+          <dt>
+            <span class="sect2">
+              <a href="createindex.html#indexcommands">Index Manipulation Commands</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p>
+          Indexes represent an alternative way of retrieving table rows.
+          Normally you retrieve table rows using the row's primary key. By
+          creating an index, you can retrieve rows with dissimilar
+          primary key values, but which share some other characteristic.
+      </p>
+      <p>
+          Indexes can only be created on top-level fields. So if you have a
+          table with record fields, or if you use an array field, you
+          cannot index the fields created within those records or arrays.
+      </p>
+      <p>
+          For example, if you had a table representing types of
+          automobiles, the primary keys for each row might be the
+          automobile's manufacturer and model type. However, if you
+          wanted to be able to query for all automobiles that
+          are painted red, regardless of the manufacturer or model type,
+          you could create an index on the table's field that contains
+          color information.
+      </p>
+      <p>
+          As with tables, the best way to create indexes is to use a
+          script. In this way, you can ensure consistency in the index(es)
+          created across all phases of your product development cycle
+          — from engineering, to test, to production.
+      </p>
+      <p>
+          Indexes can take  a long time to create because Oracle NoSQL Database must
+          examine all of the data contained in the relevant table in your
+          store.  The smaller the data contained in the table, the faster
+          your index creation will complete. Conversely, if a table
+          contains a lot of data, then it can take a long time to create
+          indexes for it.
+      </p>
+      <p>
+          To create an index, use the <code class="literal">plan add-index</code>
+          command. Similarly, to remove an index use the
+          <code class="literal">plan remove-index</code> command.
+      </p>
+      <p>
+          To add an index, specify the table you want to index, and one or
+          more fields to index. (Remember, these must be top-level fields.)
+          For example, in 
+          <a class="xref" href="tablesapi.html#tabledefine" title="Defining Tables">Defining Tables</a> 
+          we created a table named <code class="literal">myTable</code>. We could add a
+          command to the end of that script that creates an index for the
+          <code class="literal">percentage</code> field, like this:
+      </p>
+      <pre class="programlisting">## Enter into table creation mode
+table create -name myTable
+## Now add the fields
+add-field -type STRING -name item
+add-field -type STRING -name description
+add-field -type INTEGER -name count
+add-field -type DOUBLE -name percentage
+## A primary key must be defined for every table
+## Here, we will define field 'item' as the primary key.
+primary-key -field item
+## Exit table creation mode
+exit
+## Add the table to the store. Use the -wait flag to
+## force the script to wait for the plan to complete
+## before doing anything else.
+plan add-table -name myTable -wait
+
+<strong class="userinput"><code>plan add-index -name percent_idx -table myTable -field percentage -wait</code></strong>
+</pre>
+      <div class="sect2" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h3 class="title"><a id="indexcommands"></a>Index Manipulation Commands</h3>
+            </div>
+          </div>
+        </div>
+        <p>
+              There are two CLI commands that you use to manipulate
+              indexes. They are:
+          </p>
+        <div class="itemizedlist">
+          <ul type="disc">
+            <li>
+              <p>
+                      <code class="literal">plan add-index</code>
+                  </p>
+              <p>
+                      Adds an index to the store. Requires a table name and
+                      one or more field names to index. This plan can take
+                      a long time to complete if there is a large amount of
+                      existing data to be indexed.
+                  </p>
+            </li>
+            <li>
+              <p>
+                      plan remove-index
+                  </p>
+              <p>
+                      Removes an existing index from the store.
+                  </p>
+            </li>
+          </ul>
+        </div>
+        <p>
+              An exhaustive list of all CLI commands, and their syntax, can
+              be found in
+              <a href="../AdminGuide/cli_command_reference.html" class="olink">
+                  KVStore Command Reference.  
+              </a>
+              You can also see the command
+              syntax for all CLI commands using the CLI
+              <code class="literal">help</code> command. 
+          </p>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="tablesapi.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tablesapi.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="primaryshardkeys.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Chapter 4. Introducing Oracle NoSQL Database Tables and Indexes </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Chapter 5. Primary and Shard Key Design</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

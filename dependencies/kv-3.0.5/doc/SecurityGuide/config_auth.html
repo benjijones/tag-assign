@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Chapter 7. Configuring Authentication</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="up" href="index.html" title="Oracle NoSQL Database Security Guide" />
+    <link rel="prev" href="ssl_comm.html" title="SSL communication properties" />
+    <link rel="next" href="sessions.html" title="Sessions" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version DRAFT</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Chapter 7. Configuring Authentication</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="ssl_comm.html">Prev</a> </td>
+          <th width="60%" align="center"> </th>
+          <td width="20%" align="right"> <a accesskey="n" href="sessions.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="chapter" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title"><a id="config_auth"></a>Chapter 7. Configuring Authentication</h2>
+          </div>
+        </div>
+      </div>
+      <div class="toc">
+        <p>
+          <b>Table of Contents</b>
+        </p>
+        <dl>
+          <dt>
+            <span class="sect1">
+              <a href="config_auth.html#user_management">User management</a>
+            </span>
+          </dt>
+          <dd>
+            <dl>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_creation">User creation</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_modification">User modification</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_removal">User removal</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_status">User status</a>
+                </span>
+              </dt>
+              <dt>
+                <span class="sect2">
+                  <a href="config_auth.html#user_login">User login</a>
+                </span>
+              </dt>
+            </dl>
+          </dd>
+          <dt>
+            <span class="sect1">
+              <a href="sessions.html">Sessions</a>
+            </span>
+          </dt>
+        </dl>
+      </div>
+      <p> 
+        Authentication means verifying the identity of someone (a
+        user, server, or other entity) who wants to use data,
+        resources, or applications. Validating that identity
+        establishes a trust relationship for further interactions.
+        Authentication also enables accountability by making it
+        possible to link access and actions to specific identities.
+    </p>
+      <p>
+        Within a secure Oracle NoSQL Database, access to the database and internal APIs is
+        generally limited to authenticated users.  When a secure Oracle NoSQL Database
+        is first started, there are no users defined, and login to the
+        administrative interface is allowed without authentication. However, no data
+        access operations can be performed without user authentication.
+    </p>
+      <div class="sect1" lang="en" xml:lang="en">
+        <div class="titlepage">
+          <div>
+            <div>
+              <h2 class="title" style="clear: both"><a id="user_management"></a>User management</h2>
+            </div>
+          </div>
+        </div>
+        <div class="toc">
+          <dl>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_creation">User creation</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_modification">User modification</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_removal">User removal</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_status">User status</a>
+              </span>
+            </dt>
+            <dt>
+              <span class="sect2">
+                <a href="config_auth.html#user_login">User login</a>
+              </span>
+            </dt>
+          </dl>
+        </div>
+        <p>
+           Users can be created, modified or removed in the Oracle NoSQL Database through the admin CLI.
+           Information about a specific user account as well as a summary listing
+           of registered users can also be displayed. For more information, see the next
+           sections describing each user management operation.         
+        </p>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_creation"></a>User creation</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+            Once you connect to a deployed admin, users can be added.           
+            The first user created must have admin rights
+            (permission to perform user creation/modification operations). 
+            Use the <code class="literal">plan create-user</code> command to create
+            a new user:
+        </p>
+          <pre class="programlisting">plan create-user -name &lt;user-name&gt;
+[ -password &lt;password&gt; ] 
+[ -admin ] [-disable] [ -wait ] </pre>
+          <p>
+            where: 
+        </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                    <code class="literal">-name</code>
+                </p>
+                <p> 
+                    Specifies the name of the new user to create.
+                    The user name must be non-zero in length and must
+                    be composed of characters in a restricted
+                    character set composed of letters, digits, and
+                    underscore. 
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-password</code> 
+                </p>
+                <p> 
+                    Specifies the initial password for the new
+                    user. Users are encouraged to provide the password
+                    in response to a console prompt rather than
+                    specifying it on the command line. The use of this
+                    argument may be necessary for scripted
+                    configuration. 
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-admin</code> 
+                </p>
+                <p>
+                    Assigns the created user complete system access
+                    rights. The first user created must have admin
+                    rights and once that first user is created, there
+                    must always be at least one admin user defined and
+                    enabled. 
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-disable</code>
+                </p>
+                <p>
+                    Creates the user in disabled state. The initial
+                    admin user may not be created in a disabled state.
+                    The default state for a newly created user is
+                    enabled.
+                </p>
+              </li>
+            </ul>
+          </div>
+          <p>
+            Create an admin user using the <code class="literal">plan create-user</code> command
+            with the <code class="literal">-admin</code> option. You are
+            prompted to set the password if it is not provided as an argument:
+        </p>
+          <pre class="programlisting">kv-&gt; plan create-user -name root -admin -wait
+Enter the new password: 
+Re-enter the new password: 
+Executed plan 7, waiting for completion...
+Plan 7 ended successfully </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_modification"></a>User modification</h3>
+              </div>
+            </div>
+          </div>
+          <p> 
+            Use the <code class="literal">plan change-user</code> command to
+            modify the specified user account (users without the <code class="literal">-admin</code>
+            option may also change their own password):
+        </p>
+          <pre class="programlisting">plan change-user -name &lt;user-name&gt; 
+[ -disable | -enable ]
+[ -set-password [ -password &lt;password&gt; ] 
+[ -retain-current-password ] 
+[ -clear-retained-password ] ]</pre>
+          <p> where: </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                    <code class="literal">-name</code>
+                </p>
+                <p> 
+                    Specifies the name of the user to modify. The
+                    user name must be non-zero in length and must be
+                    composed of characters in a restricted character
+                    set composed of letters, digits, and underscore.
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-disable</code>
+                </p>
+                <p>
+                   Disables the specified account. Disabling an account 
+                   prevents a user from logging into the account. It also will 
+                   cause currently logged-in users to become logged out. The logout 
+                   of users is not immediate, but may be delayed by the login cache 
+                   timeout period, which is specified through the loginCacheTimeout
+                   parameter.
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-enable</code>
+                </p>
+                <p> 
+                    Enables the specified account, assuming that it
+                    was previously disabled
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-set-password</code>
+                </p>
+                <p> 
+                    Changes the password for the specified account (valid only 
+                    for internal password authentication).
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-password</code>
+                </p>
+                <p> 
+                    Specifies the new password for the new user. Users are 
+                    encouraged to provide the password in response to a console
+                    prompt rather than specifying it on the command line. The 
+                    use of this argument may be necessary for scripted configuration.
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-retain-current-password</code>. 
+                </p>
+                <p> 
+                    For use only in conjunction with -password. If specified, 
+                    causes the current password defined for the user to be 
+                    remembered as a valid alternate password for a limited 
+                    duration, or until the password is explicitly cleared. 
+                    Only one alternate password may be retained at a time.
+                    This option allows a password to be changed via the
+                    CLI while an application is still running without affecting
+                    its operation.
+                </p>
+              </li>
+              <li>
+                <p>
+                    <code class="literal">-clear-retained-password</code>. 
+                </p>
+                <p>
+                    Erases the current alternate retained password.
+                </p>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p>
+                    If <code class="literal">-set-password</code>, <code class="literal">-clear-retained-password</code> and 
+                    <code class="literal">-retain-current-password</code> are all specified in the same
+                    command, the current retained password is erased before
+                    considering whether a password is currently retained.
+                </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_removal"></a>User removal</h3>
+              </div>
+            </div>
+          </div>
+          <p> 
+            Use the <code class="literal">plan drop-user</code> command to
+            remove the specified user account (users cannot remove 
+            themselves):
+        </p>
+          <pre class="programlisting">plan drop-user -name &lt;user-name&gt; </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_status"></a>User status</h3>
+              </div>
+            </div>
+          </div>
+          <p>
+            Use the <code class="literal">show user</code> command to display
+            information about the specified user account:
+        </p>
+          <pre class="programlisting">show user -name &lt;user-name&gt;  </pre>
+          <p>
+            Use the <code class="literal">show users</code> command to
+            display a summary listing of registered users:
+        </p>
+          <pre class="programlisting">show users </pre>
+        </div>
+        <div class="sect2" lang="en" xml:lang="en">
+          <div class="titlepage">
+            <div>
+              <div>
+                <h3 class="title"><a id="user_login"></a>User login</h3>
+              </div>
+            </div>
+          </div>
+          <p> 
+            You can use either the <code class="literal">-username &lt;user&gt;</code> or
+            the <code class="literal">-security &lt;path to security file&gt;</code> runadmin
+            argument to login to the admin CLI:
+        </p>
+          <div class="itemizedlist">
+            <ul type="disc">
+              <li>
+                <p>
+                    -username &lt;user&gt;
+                </p>
+                <p>
+                    Specifies the username to log in as. This option
+                    is used in conjunction with security properties like
+                    oracle.kv.transport.
+                </p>
+              </li>
+              <li>
+                <p>
+                    -security &lt;path-to-security-file&gt; 
+                </p>
+                <p>
+                    Specifies the security file that contains
+                    property settings for the login. Relative filename 
+                    references within the security file are interpreted relative to
+                    the location of the security properties file. For example, if a 
+                    security properties file contains the setting
+                    <code class="literal">oracle.kv.ssl.truststore=client.trust</code> then, 
+                    the client.trust file should be in the same directory as the security
+                    properties file. If the file is named with an absolute path then it 
+                    can be anywhere in the file system.
+                </p>
+                <p>
+                    The following properties can be set in the file in addition
+                    to any of the SSL communication properties documented in 
+                    the previous chapter:
+                </p>
+                <pre class="programlisting">oracle.kv.auth.username
+oracle.kv.auth.wallet.dir
+oracle.kv.auth.pwdfile.file </pre>
+                <p>
+                    where the the oracle.kv.auth.wallet.dir and
+                    oracle.kv.auth.pwdfile.file properties in this
+                    file indicate the location of an EE wallet
+                    directory or CE password store file, respectively.
+                </p>
+                <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;">
+                  <h3 class="title">Note</h3>
+                  <p>
+                  The oracle.kv.security Java system property can be used
+                  as an alternative mechanism for providing 
+                  a security file path. Setting this system property is 
+                  equivalent to adding the <code class="literal">-security</code>
+                  option to the command line.  This property is supported by
+                  all tools as well as by the KVStore client library. 
+              </p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="ssl_comm.html">Prev</a> </td>
+          <td width="20%" align="center"> </td>
+          <td width="40%" align="right"> <a accesskey="n" href="sessions.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">SSL communication properties </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Sessions</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

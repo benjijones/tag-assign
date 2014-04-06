@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Using tableIterator()</title>
+    <link rel="stylesheet" href="gettingStarted.css" type="text/css" />
+    <meta name="generator" content="DocBook XSL Stylesheets V1.73.2" />
+    <link rel="start" href="index.html" title="Getting Started with Oracle NoSQL Database Tables" />
+    <link rel="up" href="tableget.html" title="Chapter 7. Reading Table Rows" />
+    <link rel="prev" href="multiget.html" title="Using multiGet()" />
+    <link rel="next" href="readfieldranges.html" title="Specifying Field Ranges" />
+  </head>
+  <body>
+    <div xmlns="" class="navheader">
+      <div class="libver">
+        <p>Library Version DRAFT</p>
+      </div>
+      <table width="100%" summary="Navigation header">
+        <tr>
+          <th colspan="3" align="center">Using tableIterator()</th>
+        </tr>
+        <tr>
+          <td width="20%" align="left"><a accesskey="p" href="multiget.html">Prev</a> </td>
+          <th width="60%" align="center">Chapter 7. Reading Table Rows</th>
+          <td width="20%" align="right"> <a accesskey="n" href="readfieldranges.html">Next</a></td>
+        </tr>
+      </table>
+      <hr />
+    </div>
+    <div class="sect1" lang="en" xml:lang="en">
+      <div class="titlepage">
+        <div>
+          <div>
+            <h2 class="title" style="clear: both"><a id="tableiterator"></a>Using tableIterator()</h2>
+          </div>
+        </div>
+      </div>
+      <p>
+            <code class="methodname">TableAPI.tableIterator()</code> provides
+            non-atomic table iteration. Use this method to iterate over
+            indexes. This method performs a parallel scan of your tables
+            if you set a concurrent request size that is larger than 1.
+        </p>
+      <p>
+            <code class="methodname">TableAPI.tableIterator()</code> does not
+            return the entire set of rows all at once. Instead, it
+            batches the fetching of rows in the iterator, to
+            minimize the number of network round trips, while not
+            monopolizing the available bandwidth. Also, the rows
+            returned by this method are in unsorted order.
+        </p>
+      <p>
+            Note that this method does not result in a single atomic
+            operation. Because the retrieval is batched, the return set can
+            change over the course of the entire retrieval operation. As a
+            result, you lose the atomicity of the operation when you use
+            this method.
+        </p>
+      <p>
+            This method provides for an unsorted traversal of rows in
+            your table. If you do not provide a key, then this method will
+            iterate over all of the table's rows.
+        </p>
+      <p>
+            When using this method, you can optionally specify:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    A <code class="classname">MultiRowOptions</code> class
+                    instance. This class allows you to specify a field
+                    range, and the ancestor and parent tables you want to
+                    include in this iteration.
+                </p>
+          </li>
+          <li>
+            <p>
+                    A <code class="classname">TableIteratorOptions</code>
+                    class instance. This class allows you to identify 
+                    the suggested number of keys to fetch during each
+                    network round trip. If you provide a value of 0, an
+                    internally determined default is used. You can also use
+                    this class to specify the traversal order
+                    (<code class="literal">FORWARD</code> and <code class="literal">UNORDERED</code>
+                    are the only options).
+                </p>
+            <p>
+                    This class also allows you to control how many threads
+                    are used to perform the store read.  By default
+                    this method performs a single-threaded retrieval of
+                    table rows. You might be able to achieve better
+                    performance by using parallel scans, which uses
+                    multiple threads to retrieve rows from the store.  See
+                    <a class="xref" href="parallelscan.html" title="Parallel Scans">Parallel Scans</a> 
+                    for more information. 
+                </p>
+            <p>
+                    Finally, you use this class to specify a consistency
+                    policy. See <a class="xref" href="consistency.html" title="Chapter 9. Consistency Guarantees">Consistency Guarantees</a>
+                    for more information.
+                </p>
+          </li>
+        </ul>
+      </div>
+      <p>
+            For example, suppose you have a table that stores information
+            about products, which is designed like this:
+        </p>
+      <pre class="programlisting">## Enter into table creation mode
+table create -name myTable
+## Now add the fields
+add-field -type STRING -name itemType
+add-field -type STRING -name itemCategory
+add-field -type STRING -name itemClass
+add-field -type STRING -name itemColor
+add-field -type STRING -name itemSize
+add-field -type FLOAT -name price
+add-field -type INTEGER -name inventoryCount
+primary-key -field itemType -field itemCategory -field itemClass
+-field itemColor -field itemSize
+shard-key -field itemType -field itemCategory -field itemClass
+## Exit table creation mode
+exit</pre>
+      <p>
+            With tables containing data like this:
+        </p>
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>
+                    Row 1:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: small</td>
+              </tr>
+              <tr>
+                <td>price: 12.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 127</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p>
+                    Row 2:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: medium</td>
+              </tr>
+              <tr>
+                <td>price: 13.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 201</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p>
+                    Row 3:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Hats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: baseball</td>
+              </tr>
+              <tr>
+                <td>itemClass: longbill</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: large</td>
+              </tr>
+              <tr>
+                <td>price: 14.07</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 39</td>
+              </tr>
+            </table>
+          </li>
+          <li>
+            <p>
+                    Row <span class="emphasis"><em>n</em></span>:
+                </p>
+            <table class="simplelist" border="0" summary="Simple list">
+              <tr>
+                <td>itemType: Coats</td>
+              </tr>
+              <tr>
+                <td>itemCategory: Casual</td>
+              </tr>
+              <tr>
+                <td>itemClass: Winter</td>
+              </tr>
+              <tr>
+                <td>itemColor: red</td>
+              </tr>
+              <tr>
+                <td>itemSize: large</td>
+              </tr>
+              <tr>
+                <td>price: 247.99</td>
+              </tr>
+              <tr>
+                <td>inventoryCount: 9</td>
+              </tr>
+            </table>
+          </li>
+        </ul>
+      </div>
+      <p>
+            Then in the simplest case, you can retrieve all of the rows
+            related to 'Hats' as follows. Note that
+            this simple example can also be accomplished with
+            <code class="methodname">TableAPI.multiGet()</code>.  However, by
+            using <code class="methodname">TableAPI.TableIterator</code>, the read
+            is non-atomic, and it can be configured to use multiple
+            threads. For very large reads, this method should perform much
+            better than if you were to use
+            <code class="methodname">TableAPI.multiGet()</code>.
+        </p>
+      <a id="tableiterator-1"></a>
+      <pre class="programlisting">package kvstore.basicExample;
+
+...
+
+import oracle.kv.KVStore;
+import oracle.kv.table.PrimaryKey;
+import oracle.kv.table.Row;
+import oracle.kv.table.Table;
+import oracle.kv.table.TableAPI;
+import oracle.kv.table.TableIterator;
+
+...
+
+// KVStore handle creation is omitted for brevity
+
+...
+
+TableAPI tableH = kvstore.getTableAPI();
+
+// The name you give to getTable() must be identical
+// to the name that you gave the table when you created
+// the table using the CLI's 'table create' command.
+Table myTable = tableH.getTable("myTable");
+
+// Construct the PrimaryKey. In this case, we are
+// using a partial primary key.
+PrimaryKey key = myTable.createPrimaryKey();
+key.put("itemType", "Hats");
+
+// Exception handling is omitted, but in production code
+// ConsistencyException, RequestTimeException, and FaultException
+// would have to be handled.
+TableIterator&lt;Row&gt; iter = tableH.tableIterator(key, null, null);
+while (iter.hasNext()) {
+    Row row = iter.next();
+    // Examine your row's fields here
+} </pre>
+    </div>
+    <div class="navfooter">
+      <hr />
+      <table width="100%" summary="Navigation footer">
+        <tr>
+          <td width="40%" align="left"><a accesskey="p" href="multiget.html">Prev</a> </td>
+          <td width="20%" align="center">
+            <a accesskey="u" href="tableget.html">Up</a>
+          </td>
+          <td width="40%" align="right"> <a accesskey="n" href="readfieldranges.html">Next</a></td>
+        </tr>
+        <tr>
+          <td width="40%" align="left" valign="top">Using multiGet() </td>
+          <td width="20%" align="center">
+            <a accesskey="h" href="index.html">Home</a>
+          </td>
+          <td width="40%" align="right" valign="top"> Specifying Field Ranges</td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

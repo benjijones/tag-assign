@@ -1,0 +1,167 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+  <title>Oracle NoSQL Database Release Notes</title>
+</head>
+
+<body>
+
+<div class="docMain">
+<center>
+<h1>Oracle NoSQL Database 12c R1<br>
+Release Notes</h1>
+</center>
+
+<!-- Note: RELEASE_VERSION and DATE are set by ant -->
+<p class="releaseInfo">Release 12cR1.3.0.5 Enterprise Edition, 2014-03-27 10:00:25 UTC</p>
+
+<h2><a name="overview">Overview</a></h2>
+<p>
+Oracle NoSQL Database is a distributed key-value store capable of scaling
+horizontally to handle very large amounts of data.
+</p>
+<p>
+Oracle NoSQL Database is compatible with Java SE 7 and later, and has
+been tested and certified against Oracle JDK 7u51. We encourage you to
+upgrade to the latest Java releases to take advantage of the latest bug 
+fixes and performance improvements.
+</p>
+<p>
+Attempting to use this release with a version of Java earlier than Java
+7 will produce an error message similar to:
+<blockquote>
+<pre>
+Exception in thread "main" java.lang.UnsupportedClassVersionError:
+  oracle/kv/impl/util/KVStoreMain : Unsupported major.minor version 51.0
+</pre>
+</blockquote>
+</p>
+<p>
+This is release 12cR1.3.0.5 Enterprise Edition of Oracle NoSQL Database. It follows
+major release 2.0.23, minor release 2.1.8, and patch releases 2.1.19,
+2.1.24, 2.1.54, and 2.1.57.
+</p>
+<!-- Comment out patch release blurb for major release -->
+<!--
+
+<h3>Differences Between Release 12cR1.3.0.5 Enterprise Edition and Release
+	2.1.54</h3>
+Oracle NoSQL Database 12cR1.3.0.5 Enterprise Edition is a patch release.  We strongly
+recommend that users of earlier versions upgrade to this release.
+-->
+
+<h3>New in Release 3.0</h3>
+<p>
+This release of Oracle NoSQL Database adds several new features
+including user/password authentication and network security, 
+secondary zones, and support for typed data, a tabular data model,
+and secondary indexes on table fields.  For a complete listing of all
+the changes made to Oracle NoSQL Database for this release (including
+all bug fixes) see the <a
+href="changelog.html">change log</a>.
+</p>
+<blockquote>
+<h4>Security</h4>
+<p>
+Support for password-based authentication of NoSQL clients and for
+secure communications using SSL to both the CE and EE versions of the
+product.  
+
+
+New features include:
+<ul>
+<li>
+A security configuration utility to configure and add security to a new
+or existing Oracle NoSQL Database installation.
+</li><li>
+Authentication methods to provide password authentication for users and systems.
+</li><li>
+Encryption of data on the network to prevent unauthorized access to that data.
+</li><li>
+External password storage to support unattended application
+start-up. Passwords may be stored on disk. The EE version of the
+product also includes the ability to use the Oracle Wallet mechanism
+for password storage.
+</li><li>
+Security policies for ensuring a secure environment.
+</li>
+</ul>
+<p>
+This feature is described in greater depth in the Security Guide, as
+well as in the Administrators Guide and product Javadoc.
+
+<h4>Secondary Zones</h4>
+<p>
+Support for secondary zones has been added. 
+<p>
+Zone is the new name for datacenter, with the new name meant to
+clarify that these node groupings may not always coincide with
+physical data centers.  A zone is a collection of nodes that have good
+network connectivity with each other and have some level of physical
+separation from nodes in other zones.
+<p>
+The new secondary zone feature permits the deployment of zones which
+can be used to make a copy of the data available at a distant
+location, or to maintain an extra copy of the data to increase
+redundancy or read capacity.
+<p>
+This feature is described in greater depth in the Administrators Guide.
+</p>
+
+<h4>Table API</h4>
+<p>
+The new Table API includes a set of data types and a tabular data
+model using those types. It lets you manipulate data using a tables
+metaphor, which organizes data in columns. An unlimited number of
+subtables are supported by this API. It is possible to create
+secondary indices to improve query speeds against your tables.
+<p>
+Tables and indexes are defined using the administrative CLI and
+accessed via programmatic API. The data CLI has been enhanced to
+perform operations on tables and indexes as well. The API is
+documented in the Oracle NoSQL Database javadoc, and is found primarily in
+the oracle.kv.table package.
+<p>
+It is possible to define tables that overlay data created with NoSQL
+DB Release 2 if that data was created using a conforming Avro
+schema. This overlay is required in order to create secondary indexes
+on conforming Release 2 data.
+<p>
+This feature is described in greater depth in the Getting Started with
+the Tables API guide.
+</p>
+</blockquote>
+<p>
+    This release of Oracle NoSQL Database comes in three distributions:
+    Community Edition (CE), Enterprise Edition (EE), and Client.
+</p>
+<p>
+    The CE version is open source. It ships with source code and is
+    released under the Affero General Public License (aGPL v3). It
+    includes the client and server distribution, but does not include
+    some server features.
+</p>
+<p>
+    The EE version does not include source code and it ships with an
+    Oracle license. The EE version includes the client and server
+    distribution, and includes several features not found in the CE version:
+    SNMP support for monitoring the store, Oracle External Tables
+    support, and Oracle Wallet support for external password storage.
+</p>
+<p>
+    The Client version is open source. It ships with source code and is
+    released under the Apache 2.0 License (Apache 2.0).  The Client
+    version only contains the implementation of the client API, which
+    may be used to access servers running under either CE or EE.
+</p>
+
+<h3>Known Issues</h3>
+<p>
+In the Community Edition, the build.xml file is known to not work properly for building from source.
+</p>
+<font size="1">Copyright (c) 1996, 2014 Oracle and/or its affiliates.  All rights reserved.</font>
+</div>
+<!-- end docMain -->
+</body>
+</html>
