@@ -1,5 +1,6 @@
+package frontend
+
 import scala.io.Source
-import scala.collection.mutable.Map
 
 object TagAssigner {
 	

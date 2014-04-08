@@ -1,3 +1,5 @@
+package frontend
+
 object TrainingDocument {
 	
 	def apply(fileName : String, fileSize : Int, tags : List[String], words : List[String]) = {

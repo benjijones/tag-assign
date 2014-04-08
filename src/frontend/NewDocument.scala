@@ -1,3 +1,5 @@
+package frontend
+
 object NewDocument{
 	
 	def apply(fileName : String, fileSize : Int, words : List[String]) = {

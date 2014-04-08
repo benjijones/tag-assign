@@ -1,3 +1,5 @@
+package frontend
+
 import scala.collection.mutable.Map
 
 class WordBag(words : List[String]) {
