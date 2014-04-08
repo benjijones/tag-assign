@@ -4,11 +4,13 @@ import oracle.kv._
 
 object DatabaseServer {
 
-	def main(args: Array[String]) {
+	def main(args : Array[String]) {
+		TagClassDao.getAll
+	}
+	
+	def connect = {
 		val config = new KVStoreConfig("tagstore", "localhost:5000")
-		val kvstore = KVStoreFactory.getStore(config)
-		val stats = kvstore.getStats(false)
-		println(stats)
+		KVStoreFactory.getStore(config)
 	}
 
 }

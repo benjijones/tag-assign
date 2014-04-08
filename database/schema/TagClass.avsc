@@ -1,0 +1,9 @@
+{
+	"type" : "record",
+	"namespace" : "tag",
+	"name" : "TagClass",
+	"fields" : [
+	  { "name" : "name", "type" : "string", "default" : "NONE" }
+	  { "name" : "document_count", "type" : "int", "default" : 0
+	  { "name" : "word_counts", "type" : "map", "values" : "int" }	  
+}
