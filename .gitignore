@@ -1,7 +1,7 @@
 .DS_STORE
 *~
 
-database/kv-root/
+database/redis-2.8.8/
 
 *.class
 *.log

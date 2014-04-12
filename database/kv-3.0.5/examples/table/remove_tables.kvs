@@ -1,9 +1,0 @@
-# Remove tables used in example from the database
-plan remove-table -wait -name simpleUsers
-plan remove-table -wait -name shardUsers.address
-plan remove-table -wait -name shardUsers
-plan remove-table -wait -name complexUsers
-plan remove-table -wait -name evolveUsers
-plan remove-table -wait -name avroTable
-plan remove-table -wait -name r2Table
-plan remove-table -wait -name keyTable
