@@ -1,5 +1,7 @@
 package frontend
 
+import database.TagClassDC
+
 object TrainingDocument {
 	
 	def apply(fileName : String, fileSize : Int, tags : List[String], words : List[String]) = {
@@ -21,11 +23,11 @@ class TrainingDocument(	fileName : String,
 						tags : List[String],
 						words : List[String]) extends Document(fileName, fileSize, words) {
 	
-	val tagClasses = tags map {TagClass(_)}
+	val tagClasses = tags map {TagClassDC(_, 1, wordCounts)}
 	
 	override def toString = List("TRAINING DOCUMENT",
 								 "File name: " + fileName,
 								 "File size: " + fileSize,
 								 "Tags: " + (tags mkString " "),
-								 "WordBag: " + wordBag) mkString ("\n")
+								 "WordCounts: " + (wordCounts mkString " ")) mkString ("\n")
 }

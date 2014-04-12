@@ -1,6 +1,8 @@
 package frontend
 
 import scala.io.Source
+import database.TagClassDao
+import database.TagClassDC
 
 object TagAssigner {
 	
@@ -25,14 +27,16 @@ object TagAssigner {
 	}
 	
 	def train(data : List[TrainingDocument]) {
-		data foreach TagClass.addTrainingDocument
+		data foreach train
 	}
 	
 	def train(document : TrainingDocument) {
-		TagClass addTrainingDocument document
+		val tagClassDCs = document tagClasses
+		
+		tagClassDCs foreach TagClassDao.addToTagClass
 	}
 	
 	def getScores(document : NewDocument) = {
-		TagClass.tagClasses map { tc => (tc.name, tc.getScore(document)) } toList
+		TagClassDao.getAll map { tc => (tc.name, tc.getScore(document)) } toList
 	}
 }
