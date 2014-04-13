@@ -3,6 +3,8 @@
 
 database/redis-2.8.8/
 
+target/
+
 *.class
 *.log
 

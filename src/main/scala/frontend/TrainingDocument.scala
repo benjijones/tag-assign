@@ -1,6 +1,6 @@
-package frontend
+package main.scala.frontend
 
-import database.TagClassDC
+import main.scala.database.TagClassDC
 
 object TrainingDocument {
 	

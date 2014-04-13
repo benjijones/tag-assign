@@ -1,8 +1,9 @@
-package frontend
+package main.scala.frontend
 
 import scala.io.Source
-import database.TagClassDao
-import database.TagClassDC
+
+import main.scala.database.DocumentDao
+import main.scala.database.TagClassDao
 
 object TagAssigner {
 	
@@ -31,9 +32,9 @@ object TagAssigner {
 	}
 	
 	def train(document : TrainingDocument) {
-		val tagClassDCs = document tagClasses
+		document.tagClasses foreach TagClassDao.addToTagClass
 		
-		tagClassDCs foreach TagClassDao.addToTagClass
+		DocumentDao.addDocument(document)
 	}
 	
 	def getScores(document : NewDocument) = {

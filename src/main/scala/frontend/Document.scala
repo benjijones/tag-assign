@@ -1,4 +1,4 @@
-package frontend
+package main.scala.frontend
 
 abstract class Document(val fileName : String, val fileSize : Int, words : List[String]) {
 	
